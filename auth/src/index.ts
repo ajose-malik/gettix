@@ -9,4 +9,5 @@ app.get('/api/users/currentuser', (req, res) => {
 
 app.listen(3000, () => console.log('STARTED 3000'))
 
-// gettix.dev/api/users/currentuser
+// gettix.dev/api/users/currentuser 
+// thisisunsafe
