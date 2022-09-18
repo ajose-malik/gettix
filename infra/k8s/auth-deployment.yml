@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: auth
-          image: us.gcr.io/gettix-dev-362722/auth
+          image: ajosemalik/gettix-auth
+          # image: us.gcr.io/gettix-dev-362722/auth
 ---
 apiVersion: v1
 kind: Service

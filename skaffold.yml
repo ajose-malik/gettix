@@ -5,12 +5,13 @@ deploy:
     manifests:
       - ./infra/k8s/*
 build:
-  # local:
-  #   push: false
-  googleCloudBuild:
-    projectId: gettix-dev-362722
+  local:
+    push: false
+  # googleCloudBuild:
+  #   projectId: gettix-dev-362722
   artifacts:
-    - image: us.gcr.io/gettix-dev-362722/auth
+    - image: ajosemalik/gettix-auth
+    # - image: us.gcr.io/gettix-dev-362722/auth
       context: auth
       docker:
         dockerfile: Dockerfile
