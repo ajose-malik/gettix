@@ -4,6 +4,7 @@ import { currentUserRouter } from './routes/current-user'
 import { signinRouter } from './routes/signin'
 import { signoutRouter } from './routes/signout'
 import { signupRouter } from './routes/signup'
+import { errorHandler } from './middleware/error-handler'
 
 const app = express()
 app.use(express.json())
@@ -13,7 +14,9 @@ app.use(signinRouter)
 app.use(signoutRouter)
 app.use(signupRouter)
 
+app.use(errorHandler)
+
 app.listen(3000, () => console.log('STARTED 3000'))
 
-// gettix.dev/api/users/currentuser 
+// gettix.dev/api/users/currentuser
 // thisisunsafe
