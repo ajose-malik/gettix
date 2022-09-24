@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-deployment
+  name: auth-mongo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: auth-mongo
   template:
     metadata:
       labels:
-        app: auth
+        app: auth-mongo
     spec:
       containers:
-      - name: auth
-        image: ajosemalik/gettix-auth
-        # image: us.gcr.io/gettix-dev-362722/auth
+      - name: auth-mongo
+        image: mongo
         resources:
           limits:
             memory: "256Mi"
@@ -24,12 +23,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-service
+  name: auth-mongo-service
 spec:
   selector:
-    app: auth
+    app: auth-mongo
   ports:
-  - name: auth
+  - name: auth-mongo
     protocol: TCP
-    port: 3000
-    targetPort: 3000
+    port: 27017
+    targetPort: 27017
+
+ 
