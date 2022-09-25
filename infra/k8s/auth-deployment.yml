@@ -18,7 +18,7 @@ spec:
         # image: us.gcr.io/gettix-dev-362722/auth
         resources:
           limits:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "1000m"
 ---
 apiVersion: v1
