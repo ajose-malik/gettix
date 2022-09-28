@@ -39,7 +39,7 @@ router.post(
 				id: user.id,
 				email: user.email
 			},
-			'asdf'
+			'JWT_GETTIX_KEY'
 		)
 
 		// Store on session object

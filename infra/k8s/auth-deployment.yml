@@ -16,6 +16,12 @@ spec:
       - name: auth
         image: ajosemalik/gettix-auth
         # image: us.gcr.io/gettix-dev-362722/auth
+        env:
+        - name: JWT_GETTIX_KEY
+          valueFrom:
+            secretKeyRef: 
+              name: jwt-gettix
+              key: JWT_GETTIX_KEY
         resources:
           limits:
             memory: "512Mi"
