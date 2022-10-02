@@ -1,6 +1,10 @@
-import express, {Request, Response} from 'express'
-import { body} from 'express-validator'
+import express, { Request, Response } from 'express'
+import { body } from 'express-validator'
+import jwt from 'jsonwebtoken'
 import { validateRequest } from '../middleware/validate-request'
+import { User } from '../models/user'
+import { BadRequestError } from '../errors/bad-request-error'
+import { PasswordManager } from '../services/password-manager'
 
 const router = express.Router()
 
@@ -11,9 +15,36 @@ router.post(
 		body('password').trim().notEmpty().withMessage('You must enter a password')
 	],
 	validateRequest,
-	(req: Request, res: Response) => {
+	async (req: Request, res: Response) => {
+		const { email, password } = req.body
 
+		const existingUser = await User.findOne({ email })
+		if (!existingUser) {
+			throw new BadRequestError('Invalide credentials')
+		}
 
+		const passwordsMatch = await PasswordManager.compare(
+			existingUser.password,
+			password
+		)
+		if (!passwordsMatch) {
+			throw new BadRequestError('Invalide credentials')
+		}
+
+		// Generate JWT
+		const userJwt = jwt.sign(
+			{
+				id: existingUser.id,
+				email: existingUser.email
+			},
+			process.env.JWT_GETTIX_KEY!
+		)
+
+		// Store on session object
+		req.session = {
+			jwt: userJwt
+		}
+		res.status(200).send(existingUser)
 	}
 )
 
