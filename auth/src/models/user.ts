@@ -18,16 +18,28 @@ interface UserDoc extends mongoose.Document {
 	password: string
 }
 
-const userSchema = new mongoose.Schema({
-	email: {
-		type: String,
-		required: true
+const userSchema = new mongoose.Schema(
+	{
+		email: {
+			type: String,
+			required: true
+		},
+		password: {
+			type: String,
+			required: true
+		}
 	},
-	password: {
-		type: String,
-		required: true
+	{
+		toJSON: {
+			transform(doc, response) {
+				response.id = response._id
+				delete response._id
+				delete response.__v
+				delete response.password
+			}
+		}
 	}
-})
+)
 
 userSchema.pre('save', async function (done) {
 	if (this.isModified('password')) {
