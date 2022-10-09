@@ -19,3 +19,12 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    - image: ajosemalik/gettix-client
+    # - image: us.gcr.io/gettix-dev-362722/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'client/**/*.js'

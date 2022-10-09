@@ -16,6 +16,3 @@ const start = async () => {
 }
 
 start()
-
-// gettix.dev/api/users/currentuser
-// thisisunsafe

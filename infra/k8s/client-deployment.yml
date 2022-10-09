@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: ajosemalik/gettix-client
+        # image: us.gcr.io/gettix-dev-362722/client
+        env:
+        - name: JWT_GETTIX_KEY
+          valueFrom:
+            secretKeyRef: 
+              name: jwt-gettix
+              key: JWT_GETTIX_KEY
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-service
+spec:
+  selector:
+    app: client
+  ports:
+  - name: client
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
