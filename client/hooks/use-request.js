@@ -10,16 +10,17 @@ export default ({ url, method, body, onSuccess }) => {
 			const response = await axios[method](url, body)
 
 			if (onSuccess) {
-				onSuccess(console.log(response.data))
+				onSuccess(response.data)
 			}
 			return response.data
 		} catch (err) {
-			const errMessage = err.response.data.errors
+			const errors = err.response.data.errors
+
 			setErrors(
 				<div className='alert alert-danger'>
 					<h4>Something went wrong</h4>
 					<ul className='my-0'>
-						{errMessage.map((err, i) => (
+						{errors.map((err, i) => (
 							<li key={i}>{err.message}</li>
 						))}
 					</ul>
@@ -27,6 +28,5 @@ export default ({ url, method, body, onSuccess }) => {
 			)
 		}
 	}
-
 	return { doRequest, errors }
 }
