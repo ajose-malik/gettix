@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express'
-import { currentUser } from '../middleware/current-user'
-import { requireAuth } from '../middleware/require-auth'
+import { currentUser, requireAuth } from '@gettix_ma/common'
 
 const router = express.Router()
 
