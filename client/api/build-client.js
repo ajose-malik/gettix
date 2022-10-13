@@ -11,7 +11,7 @@ export default ({ req }) => {
 	} else {
 		// Client request
 		return axios.create({
-			baseUrl: '/'
+			baseURL: '/'
 		})
 	}
 }

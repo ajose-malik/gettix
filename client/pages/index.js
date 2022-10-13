@@ -1,16 +1,18 @@
-import axios from 'axios'
 import buildClient from '../api/build-client'
 
 const LandingPage = ({ currentUser }) => {
 	console.log(currentUser)
-	return <h1>{currentUser ? 'You are signed in' : 'You are not signed in'}</h1>
+	return <h1>{currentUser ? 'You are signed in' : 'You are signed out'}</h1>
 }
 
-LandingPage.getInitialProps = async context => {
-	// Check if request is made from server or client
+export const getServerSideProps = async context => {
 	const client = buildClient(context)
-	const { data } = await client.get('/api/users/currentuser').catch(err => null)
-	return data
+	try {
+		const { data } = await client.get('/api/users/currentuser')
+		return { props: data }
+	} catch (err) {
+		return { props: {} }
+	}
 }
 
 export default LandingPage
