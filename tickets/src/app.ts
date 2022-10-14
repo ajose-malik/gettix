@@ -2,6 +2,7 @@ import express from 'express'
 import 'express-async-errors'
 import cookieSession from 'cookie-session'
 import { errorHandler, NotFoundError } from '@gettix_ma/common'
+import { createTicketRouter } from './routes/new'
 
 const app = express()
 app.set('trust proxy', true) // Allow proxies to be used i.e. nginx
@@ -13,10 +14,13 @@ app.use(
 	})
 )
 
+app.use(createTicketRouter)
+app.use(errorHandler)
+
 app.all('*', async (req, res) => {
 	throw new NotFoundError()
 })
 
-app.use(errorHandler)
+
 
 export { app }
