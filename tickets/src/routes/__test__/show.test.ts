@@ -4,7 +4,7 @@ import { app } from '../../app'
 
 it('should return 404 if ticket is not found', async () => {
 	const id = new mongoose.Types.ObjectId().toHexString()
-	
+
 	await request(app).get(`/api/tickets/${id}`).send().expect(404)
 })
 
