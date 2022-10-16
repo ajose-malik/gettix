@@ -2,10 +2,11 @@ import request from 'supertest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import { app } from '../app'
+import jwt from 'jsonwebtoken'
 
 // Declare signin type glabally
 declare global {
-	var signin: () => Promise<string[]>
+	var signin: () => string[]
 }
 
 let mongo: any
@@ -32,15 +33,21 @@ afterAll(async () => {
 })
 
 // Implement signin glabally
-global.signin = async () => {
-	const email = 'test@test.com'
-	const password = 'password'
-	const response = await request(app)
-		.post('/api/users/signup')
-		.send({ email, password })
-		.expect(201)
+global.signin = () => {
+	const payload = {
+		id: 'test',
+		email: 'test@test.com'
+	}
+	// Create JWT using payload
+	const token = jwt.sign(payload, process.env.JWT_GETTIX_KEY!)
 
-	const cookie = response.get('Set-Cookie')
+	// Build session Object with the token generated and convert to JSON
+	const session = { jwt: token }
+	const sessionJSON = JSON.stringify(session)
 
-	return cookie
+	// Encode JSON to base64
+	const base64 = Buffer.from(sessionJSON).toString('base64')
+
+	// Return the session
+	return [`session=${base64}`]
 }

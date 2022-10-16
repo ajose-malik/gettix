@@ -1,7 +1,7 @@
 import express from 'express'
 import 'express-async-errors'
 import cookieSession from 'cookie-session'
-import { errorHandler, NotFoundError } from '@gettix_ma/common'
+import { errorHandler, NotFoundError, currentUser } from '@gettix_ma/common'
 import { createTicketRouter } from './routes/new'
 
 const app = express()
@@ -14,13 +14,12 @@ app.use(
 	})
 )
 
+app.use(currentUser)
 app.use(createTicketRouter)
 app.use(errorHandler)
 
 app.all('*', async (req, res) => {
 	throw new NotFoundError()
 })
-
-
 
 export { app }
