@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { app } from './app'
+import { natsWrapper } from './nats-wrapper'
 
 const start = async () => {
 	if (!process.env.JWT_GETTIX_KEY) {
@@ -10,6 +11,11 @@ const start = async () => {
 	}
 
 	try {
+		await natsWrapper.connect(
+			'gettix',
+			'randString',
+			'http://nats-service:4222'
+		)
 		await mongoose.connect(process.env.MONGO_URI)
 		console.log('STARTED DATABASE')
 	} catch (err) {
