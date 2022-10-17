@@ -16,6 +16,14 @@ const start = async () => {
 			'randString',
 			'http://nats-service:4222'
 		)
+
+		natsWrapper.client.on('close', () => {
+			console.log('NATS CONNECTION CLOSED')
+			process.exit()
+		})
+		process.on('SIGINT', () => natsWrapper.client.close())
+		process.on('SIGTERM', () => natsWrapper.client.close())
+
 		await mongoose.connect(process.env.MONGO_URI)
 		console.log('STARTED DATABASE')
 	} catch (err) {
