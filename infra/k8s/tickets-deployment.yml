@@ -17,6 +17,14 @@ spec:
         image: ajosemalik/gettix-tickets
         # image: us.gcr.io/gettix-dev-362722/tickets
         env:
+        - name: NATS_CLIENT_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NATS_URL
+          value: 'http://nats-service:4222'
+        - name: NATS_CLUSTER_ID
+          value: gettix
         - name: MONGO_URI
           value: 'mongodb://tickets-mongo-service:27017/tickets'
         - name: JWT_GETTIX_KEY
