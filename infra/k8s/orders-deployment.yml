@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tickets-deployment
+  name: orders-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tickets
+      app: orders
   template:
     metadata:
       labels:
-        app: tickets
+        app: orders
     spec:
       containers:
-      - name: tickets
-        image: ajosemalik/gettix-tickets
-        # image: us.gcr.io/gettix-dev-362722/tickets
+      - name: orders
+        image: ajosemalik/gettix-orders
+        # image: us.gcr.io/gettix-dev-362722/orders
         env:
         - name: NATS_CLIENT_ID
           valueFrom:
@@ -26,7 +26,7 @@ spec:
         - name: NATS_CLUSTER_ID
           value: gettix
         - name: MONGO_URI
-          value: 'mongodb://tickets-mongo-service:27017/tickets'
+          value: 'mongodb://orders-mongo-service:27017/orders'
         - name: JWT_GETTIX_KEY
           valueFrom:
             secretKeyRef: 
@@ -40,12 +40,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tickets-service
+  name: orders-service
 spec:
   selector:
-    app: tickets
+    app: orders
   ports:
-  - name: tickets
+  - name: orders
     protocol: TCP
     port: 3000
     targetPort: 3000

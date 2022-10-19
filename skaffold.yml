@@ -37,3 +37,12 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    - image: ajosemalik/gettix-orders
+      # - image: us.gcr.io/gettix-dev-362722/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'

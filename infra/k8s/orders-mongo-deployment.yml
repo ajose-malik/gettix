@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-mongo-deployment
+  name: orders-mongo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-mongo
+      app: orders-mongo
   template:
     metadata:
       labels:
-        app: auth-mongo
+        app: orders-mongo
     spec:
       containers:
-      - name: auth-mongo
+      - name: orders-mongo
         image: mongo
         resources:
           limits:
@@ -23,12 +23,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-mongo-service
+  name: orders-mongo-service
 spec:
   selector:
-    app: auth-mongo
+    app: orders-mongo
   ports:
-  - name: auth-mongo
+  - name: orders-mongo
     protocol: TCP
     port: 27017
     targetPort: 27017

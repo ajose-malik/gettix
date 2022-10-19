@@ -24,8 +24,8 @@ spec:
               key: JWT_GETTIX_KEY
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "1000m"
+            memory: "600Mi"
+            cpu: "600m"
 ---
 apiVersion: v1
 kind: Service
