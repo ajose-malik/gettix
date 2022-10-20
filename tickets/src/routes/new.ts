@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { body } from 'express-validator'
 import { requireAuth, validateRequest } from '@gettix_ma/common'
-import { Ticket } from '../../models/tickets'
+import { Ticket } from '../models/ticket'
 import { TicketCreatedPublisher } from '../events/publisher/ticket-created-publisher'
 import { natsWrapper } from '../nats-wrapper'
 

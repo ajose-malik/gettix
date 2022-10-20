@@ -6,14 +6,14 @@ import {
 	NotFoundError,
 	NotAuthorizedError
 } from '@gettix_ma/common'
-import { Ticket } from '../models/ticket'
-import { TicketUpdatedPublisher } from '../events/publisher/ticket-updated-publisher'
+import { Order } from '../models/order'
+import { OrderDeletedPublisher } from '../events/publisher/order-deleted-publisher'
 import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
 
-router.put(
-	'/api/tickets/:id',
+router.delete(
+	'/api/orders/:orderId',
 	requireAuth,
 	[
 		body('title').not().isEmpty().withMessage('Title is required'),
@@ -21,29 +21,29 @@ router.put(
 	],
 	validateRequest,
 	async (req: Request, res: Response) => {
-		const ticket = await Ticket.findById(req.params.id)
+		const order = await Order.findById(req.params.id)
 
-		if (!ticket) {
+		if (!order) {
 			throw new NotFoundError()
 		}
 
-		if (ticket.userId !== req.currentUser!.id) {
+		if (order.userId !== req.currentUser!.id) {
 			throw new NotAuthorizedError()
 		}
 
 		const { title, price } = req.body
 
-		ticket.set({ title, price })
-		await ticket.save()
-		new TicketUpdatedPublisher(natsWrapper.client).publish({
-			id: ticket.id,
-			title: ticket.title,
-			price: parseInt(ticket.price),
-			userId: ticket.userId
+		order.set({ title, price })
+		await order.save()
+		new OrderDeletedPublisher(natsWrapper.client).publish({
+			id: order.id,
+			title: order.title,
+			price: parseInt(order.price),
+			userId: order.userId
 		})
 
-		res.send(ticket)
+		res.send(order)
 	}
 )
 
-export { router as updateTicketRouter }
+export { router as deleteOrderRouter }
