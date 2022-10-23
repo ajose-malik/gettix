@@ -38,7 +38,7 @@ router.put(
 		new TicketUpdatedPublisher(natsWrapper.client).publish({
 			id: ticket.id,
 			title: ticket.title,
-			price: parseInt(ticket.price),
+			price: ticket.price,
 			userId: ticket.userId
 		})
 

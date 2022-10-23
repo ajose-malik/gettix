@@ -5,7 +5,8 @@ import {
 	requireAuth,
 	validateRequest,
 	NotFoundError,
-	BadRequestError
+	BadRequestError,
+	OrderStatus
 } from '@gettix_ma/common'
 import { Order } from '../models/order'
 import { Ticket } from '../models/ticket'
@@ -42,19 +43,30 @@ router.post(
 		}
 
 		// Stamp ticket with expiration date
-		// Build and save user order to database
-		// Publish created order
+		const EXPIRATION_WINDOW = 60 * 15 //15mins
+		const expiration = new Date()
+		expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW)
 
+		// Build and save user order to database
 		const order = Order.build({
-			ticketId,
-			userId: req.currentUser!.id
+			userId: req.currentUser!.id,
+			status: OrderStatus.Created,
+			expiresAt: expiration,
+			ticket
 		})
 
 		await order.save()
+
+		// Publish created order
 		await new OrderCreatedPublisher(natsWrapper.client).publish({
 			id: order.id,
-			ticketId: order.ticketId,
-			userId: order.userId
+			status: order.status,
+			userId: order.userId,
+			expiresAt: order.expiresAt.toISOString(),
+			ticket: {
+				id: ticketId,
+				price: ticket.price
+			}
 		})
 		res.status(201).send(order)
 	}

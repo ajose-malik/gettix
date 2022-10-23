@@ -1,13 +1,12 @@
 import express, { Request, Response } from 'express'
-import { body } from 'express-validator'
 import {
 	requireAuth,
-	validateRequest,
 	NotFoundError,
-	NotAuthorizedError
+	NotAuthorizedError,
+	OrderStatus
 } from '@gettix_ma/common'
 import { Order } from '../models/order'
-import { OrderDeletedPublisher } from '../events/publisher/order-deleted-publisher'
+import { OrderCancelledPublisher } from '../events/publisher/order-cancelled-publisher'
 import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
@@ -15,13 +14,8 @@ const router = express.Router()
 router.delete(
 	'/api/orders/:orderId',
 	requireAuth,
-	[
-		body('title').not().isEmpty().withMessage('Title is required'),
-		body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0')
-	],
-	validateRequest,
 	async (req: Request, res: Response) => {
-		const order = await Order.findById(req.params.id)
+		const order = await Order.findById(req.params.orderId)
 
 		if (!order) {
 			throw new NotFoundError()
@@ -31,18 +25,17 @@ router.delete(
 			throw new NotAuthorizedError()
 		}
 
-		const { title, price } = req.body
-
-		order.set({ title, price })
+		order.status = OrderStatus.Cancelled
 		await order.save()
-		new OrderDeletedPublisher(natsWrapper.client).publish({
-			id: order.id,
-			title: order.title,
-			price: parseInt(order.price),
-			userId: order.userId
-		})
 
-		res.send(order)
+		// Publish deleted order
+		await new OrderCancelledPublisher(natsWrapper.client).publish({
+			id: order.id,
+			ticket: {
+				id: order.ticket.id
+			}
+		})
+		res.status(204).send(order)
 	}
 )
 

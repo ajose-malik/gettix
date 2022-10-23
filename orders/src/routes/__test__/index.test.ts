@@ -1,20 +1,58 @@
 import request from 'supertest'
 import { app } from '../../app'
+import { Order } from '../../models/order'
+import { Ticket } from '../../models/ticket'
 
-const createTicket = (title: string, price: number) => {
-	return request(app)
-		.post('/api/tickets')
-		.set('Cookie', global.signin())
-		.send({ title, price })
-		.expect(201)
+const buildTicket = async () => {
+	const ticket = Ticket.build({
+		title: 'concert',
+		price: 20
+	})
+	await ticket.save()
+
+	return ticket
 }
 
-it('should fetch a list of tickets', async () => {
-	await createTicket('hi', 5)
-	await createTicket('hello', 10)
-	await createTicket('aloha', 20)
+it('should fetch orders', async () => {
+	const ticketOne = await buildTicket()
+	const ticketTwo = await buildTicket()
+	const ticketThree = await buildTicket()
 
-	const response = await request(app).get('/api/tickets').send().expect(200)
+	const userOne = global.signin()
+	const userTwo = global.signin()
 
-	expect(response.body.length).toEqual(3)
+	await request(app)
+		.post('/api/orders')
+		.set('Cookie', userOne)
+		.send({
+			ticketId: ticketOne.id
+		})
+		.expect(201)
+
+	const { body: orderOne } = await request(app) // destructure 'body' and assign it to variable 'orderOne'
+		.post('/api/orders')
+		.set('Cookie', userTwo)
+		.send({
+			ticketId: ticketTwo.id
+		})
+		.expect(201)
+
+	const { body: orderTwo } = await request(app) // destructure 'body' and assign it to variable 'orderTwo'
+		.post('/api/orders')
+		.set('Cookie', userTwo)
+		.send({
+			ticketId: ticketThree.id
+		})
+		.expect(201)
+
+	const response = await request(app)
+		.get('/api/orders')
+		.set('Cookie', userTwo)
+		.expect(200)
+
+	expect(response.body.length).toEqual(2)
+	expect(response.body[0].id).toEqual(orderOne.id)
+	expect(response.body[1].id).toEqual(orderTwo.id)
+	expect(response.body[0].ticket.id).toEqual(ticketTwo.id)
+	expect(response.body[1].ticket.id).toEqual(ticketThree.id)
 })

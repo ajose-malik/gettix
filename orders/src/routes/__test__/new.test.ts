@@ -1,72 +1,68 @@
+import mongoose from 'mongoose'
 import request from 'supertest'
+import { OrderStatus } from '@gettix_ma/common'
 import { app } from '../../app'
+import { Order } from '../../models/order'
 import { Ticket } from '../../models/ticket'
 import { natsWrapper } from '../../nats-wrapper'
 
-it('should listen to ticket route for post request', async () => {
-	const response = await request(app).post('/api/tickets').send({})
-	expect(response.status).not.toEqual(404)
+it('should return error if ticket does not exist', async () => {
+	const ticketId = new mongoose.Types.ObjectId()
+
+	await request(app)
+		.post('/api/orders')
+		.set('Cookie', global.signin())
+		.send({ ticketId })
+		.expect(404)
 })
 
-it('should sadly deny access if user is not signed in', async () => {
-	const response = await request(app).post('/api/tickets').send({})
-	expect(response.status).toEqual(401)
-})
+it('should return error if ticket is reserved', async () => {
+	const ticket = Ticket.build({
+		title: 'concert',
+		price: 20
+	})
 
-it('should return error with invalid title', async () => {
-	await request(app)
-		.post('/api/tickets')
-		.set('Cookie', global.signin())
-		.send({ title: '', price: 10 })
-		.expect(400)
-
-	await request(app)
-		.post('/api/tickets')
-		.set('Cookie', global.signin())
-		.send({ price: 10 })
-		.expect(400)
-})
-
-it('should return error with invalid price', async () => {
-	await request(app)
-		.post('/api/tickets')
-		.set('Cookie', global.signin())
-		.send({ title: 'hello', price: -10 })
-		.expect(400)
+	await ticket.save()
+	const order = Order.build({
+		userId: 'test',
+		status: OrderStatus.Created,
+		expiresAt: new Date(),
+		ticket
+	})
+	await order.save()
 
 	await request(app)
-		.post('/api/tickets')
+		.post('/api/orders')
 		.set('Cookie', global.signin())
-		.send({ title: 'hello' })
+		.send({ ticketId: ticket.id })
 		.expect(400)
 })
 
-it('should create ticket with valid inputs', async () => {
-	let tickets = await Ticket.find({})
-	expect(tickets.length).toEqual(0)
-
-	const title = 'hi'
+it('should reserve a ticket', async () => {
+	const ticket = Ticket.build({
+		title: 'concert',
+		price: 20
+	})
+	await ticket.save()
 
 	await request(app)
-		.post('/api/tickets')
+		.post('/api/orders')
 		.set('Cookie', global.signin())
-		.send({ title, price: 20 })
+		.send({ ticketId: ticket.id })
 		.expect(201)
-
-	tickets = await Ticket.find({})
-	expect(tickets.length).toEqual(1)
-	expect(tickets[0].price).toEqual(20)
-	expect(tickets[0].title).toEqual(title)
 })
 
-it('should publish an event', async () => {
-	const title = 'hi'
+it('should publish event for created order', async () => {
+	const ticket = Ticket.build({
+		title: 'concert',
+		price: 20
+	})
+	await ticket.save()
 
 	await request(app)
-		.post('/api/tickets')
+		.post('/api/orders')
 		.set('Cookie', global.signin())
-		.send({ title, price: 20 })
+		.send({ ticketId: ticket.id })
 		.expect(201)
-
 	expect(natsWrapper.client.publish).toHaveBeenCalled()
 })
