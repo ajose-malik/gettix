@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import request from 'supertest'
 import { app } from '../../app'
 import { Ticket } from '../../models/ticket'
@@ -5,7 +6,8 @@ import { Ticket } from '../../models/ticket'
 it('should return order if found', async () => {
 	const ticket = Ticket.build({
 		title: 'concert',
-		price: 20
+		price: 20,
+		id: new mongoose.Types.ObjectId().toHexString(),
 	})
 	await ticket.save()
 
@@ -30,7 +32,8 @@ it('should return order if found', async () => {
 it('should return error if order does not belong to user', async () => {
 	const ticket = Ticket.build({
 		title: 'concert',
-		price: 20
+		price: 20,
+		id: new mongoose.Types.ObjectId().toHexString(),
 	})
 	await ticket.save()
 
