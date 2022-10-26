@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { natsWrapper } from '../../../nats-wrapper'
-import { TicketUpdatedListener } from '../ticket-updated-listeners'
+import { TicketUpdatedListener } from '../ticket-updated-listener'
 import { TicketUpdatedEvent } from '@gettix_ma/common'
 import { Message } from 'node-nats-streaming'
 import { Ticket } from '../../../models/ticket'
@@ -12,8 +12,8 @@ const setup = async () => {
 		title: 'concert',
 		price: 20
 	})
-	await ticket.save();
-	
+	await ticket.save()
+
 	const data: TicketUpdatedEvent['data'] = {
 		id: ticket.id,
 		version: ticket.version + 1,

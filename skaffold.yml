@@ -46,3 +46,12 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    - image: ajosemalik/gettix-expiration
+      # - image: us.gcr.io/gettix-dev-362722/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'

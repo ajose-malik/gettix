@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { natsWrapper } from '../../../nats-wrapper'
-import { TicketCreatedListener } from '../ticket-created-listeners'
+import { TicketCreatedListener } from '../ticket-created-listener'
 import { TicketCreatedEvent } from '@gettix_ma/common'
 import { Message } from 'node-nats-streaming'
 import { Ticket } from '../../../models/ticket'
