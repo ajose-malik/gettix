@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 // Declare signin type glabally
 declare global {
-	var signin: () => string[]
+	var signin: (id?: string) => string[]
 }
 
 jest.mock('../nats-wrapper')
@@ -34,9 +34,9 @@ afterAll(async () => {
 })
 
 // Implement signin glabally
-global.signin = () => {
+global.signin = (id?: string) => {
 	const payload = {
-		id: new mongoose.Types.ObjectId().toHexString(),
+		id: id || new mongoose.Types.ObjectId().toHexString(),
 		email: 'test@test.com'
 	}
 	// Create JWT using payload
