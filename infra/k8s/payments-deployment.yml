@@ -32,6 +32,11 @@ spec:
             secretKeyRef: 
               name: jwt-gettix
               key: JWT_GETTIX_KEY
+        - name: STRIPE_KEY
+          valueFrom:
+            secretKeyRef: 
+              name: stripe-secret
+              key: STRIPE_KEY
         resources:
           limits:
             memory: "600Mi"

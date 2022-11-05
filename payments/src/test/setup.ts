@@ -1,6 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
+require("dotenv").config()
+
 
 // Declare signin type glabally
 declare global {
@@ -8,6 +10,8 @@ declare global {
 }
 
 jest.mock('../nats-wrapper')
+
+process.env.STRIPE_KEY // Key to run integration test
 
 let mongo: any
 beforeAll(async () => {
