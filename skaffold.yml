@@ -55,3 +55,12 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
+    - image: ajosemalik/gettix-payments
+      # - image: us.gcr.io/gettix-dev-362722/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
