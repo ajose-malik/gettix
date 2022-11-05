@@ -46,7 +46,7 @@ const orderSchema = new mongoose.Schema(
 	}
 )
 
-orderSchema.set('versionKey', 'version')
+orderSchema.set('versionKey', 'version') // use 'version' instead of '_v'
 orderSchema.plugin(updateIfCurrentPlugin)
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
