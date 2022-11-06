@@ -6,7 +6,9 @@ export default ({ Component, pageProps }) => {
 	return (
 		<div>
 			<Header currentUser={currentUser} />
-			<Component {...pageProps} />
+			<div className='container'>
+				<Component {...pageProps} />
+			</div>
 		</div>
 	)
 }
