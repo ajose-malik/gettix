@@ -10,6 +10,7 @@ import {
 } from '@gettix_ma/common'
 import { stripe } from '../stripe'
 import { Order } from '../models/order'
+import { Payment } from '../models/payments'
 
 const router = express.Router()
 
@@ -34,11 +35,17 @@ router.post(
 			throw new BadRequestError('Cannot pay for a cancelled order')
 		}
 
-		await stripe.charges.create({
+		const charge = await stripe.charges.create({
 			currency: 'usd',
 			amount: order.price * 100, // Amount is based on cents - hence multiply by 100
 			source: token
 		})
+
+		const payment = Payment.build({
+			orderId,
+			stripeId: charge.id
+		})
+		await payment.save()
 
 		res.status(201).send({ success: true })
 	}
