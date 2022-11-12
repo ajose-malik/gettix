@@ -43,7 +43,7 @@ router.post(
 		}
 
 		// Stamp ticket with expiration date
-		const EXPIRATION_WINDOW = 15 * 60 //15mins
+		const EXPIRATION_WINDOW = 30  // 15mins
 		const expiration = new Date()
 		expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW)
 

@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current'
 import { OrderStatus } from '@gettix_ma/common'
 import { Order } from './order'
-import { idText } from 'typescript'
 
 interface TicketAttrs {
 	id: string
